@@ -67,10 +67,9 @@ public class UserService {
 
         UUID token = UUID.randomUUID();
 
-        RegistrationEntity entity = new RegistrationEntity(null, request.getEmail(), token);
+        RegistrationEntity entity = new RegistrationEntity(request.getEmail(), token);
 
         registrationRepository.save(entity);
-
 
         emailService.sendRegistrationEmail(request.getEmail(), token);
 

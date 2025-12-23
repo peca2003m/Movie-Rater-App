@@ -32,7 +32,7 @@ public class RegisterController {
 
         try {
             userService.createNewUser(request);
-            return ResponseEntity.ok(new RegisterResponse("Registered successfully. Welcome, " + request.getFirstName() + " " +request.getFirstName()));
+            return ResponseEntity.ok(new RegisterResponse("Registered successfully. Welcome, " + request.getFirstName() + " " +request.getLastName()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new RegisterResponse(e.getMessage()));
         }

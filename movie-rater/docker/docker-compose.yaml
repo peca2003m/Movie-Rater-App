@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: movie-rater-psql
+    image: "postgres:15.3-alpine"
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DATABASE: movie_rater
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: movie-rater-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+
+volumes:
+  pgdata:
+  redisdata:
