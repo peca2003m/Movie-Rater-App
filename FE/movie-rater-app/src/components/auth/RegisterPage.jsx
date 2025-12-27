@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../../api/movieApi';
 
 function RegisterPage({ onLogin }) {
     const [isLogin, setIsLogin] = useState(false);
+    const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
 
+    const token = searchParams.get('token'); 
     const [loginData, setLoginData] = useState({
+        token: token,
         firstName: '',
         lastName: '',
-        username: '',
         password: ''
     });
 
@@ -61,13 +63,6 @@ function RegisterPage({ onLogin }) {
                             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                         />
                     )}
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={loginData.username}
-                        onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
                     <input
                         type="password"
                         placeholder="Password"

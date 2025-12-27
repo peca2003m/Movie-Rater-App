@@ -6,6 +6,7 @@ import com.example.movie_rater.dto.UserPreRegisterRequest;
 import com.example.movie_rater.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,7 @@ public class RegisterController {
     private final UserService userService;
 
     @PostMapping("/pre-register")
-    public ResponseEntity preRegisterUser(@RequestBody @Validated UserPreRegisterRequest request){
+    public ResponseEntity preRegisterUser(@Valid @RequestBody UserPreRegisterRequest request){
 
         userService.preRegister(request);
         return ResponseEntity.ok().body("Email sent successfully");

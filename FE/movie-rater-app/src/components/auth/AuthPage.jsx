@@ -34,8 +34,9 @@ function AuthPage({ onLogin }) {
                     console.log('Response:', response); 
                     alert('Registration email sent! Please check your inbox.');
                 } catch (err) {
-                    console.error('Full error:', err); 
-                    setError('Failed to send registration email. Please try again.');
+                    setError(err.message);
+                    //console.error('Full error:', err); 
+                    //setError('Failed to send registration email. Please try again.');
                 }
             }
         } catch (err) {

@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,11 +34,36 @@ public class UserService {
 
     public UserEntity createNewUser(UserCreateRequest request){
 
+        Optional<RegistrationEntity> registrationOpt = registrationRepository.findByToken(request.getToken());
+
+        if (!registrationOpt.isPresent()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid or expired token!");
+        }
+
+        RegistrationEntity registration = registrationOpt.get();
+        String email = registration.getEmail();
+
+        Optional<UserEntity> existingUser = userRepository.findByUsername(email);
+        if (existingUser.isPresent()) {
+            registrationRepository.delete(registration);
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User already registered!");
+        }
+
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        UserEntity user = new UserEntity(null, request.getFirstName(), request.getLastName(), request.getUsername(), encodedPassword);
+        UserEntity user = new UserEntity(
+                null,
+                request.getFirstName(),
+                request.getLastName(),
+                email,
+                encodedPassword
+        );
 
-        return userRepository.save(user);
+        UserEntity savedUser = userRepository.save(user);
+
+        registrationRepository.delete(registration);
+
+        return savedUser;
 
     }
 
@@ -65,13 +91,25 @@ public class UserService {
 
     public void preRegister(UserPreRegisterRequest request) {
 
-        UUID token = UUID.randomUUID();
+        String email = request.getEmail();
 
-        RegistrationEntity entity = new RegistrationEntity(request.getEmail(), token);
+        Optional<UserEntity> existingUser = userRepository.findByUsername(email);
+        if (existingUser.isPresent()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User with this email is already registered!");
+        }
 
-        registrationRepository.save(entity);
+        Optional<RegistrationEntity> existingRegistration = registrationRepository.findById(email);
 
-        emailService.sendRegistrationEmail(request.getEmail(), token);
+        UUID token;
+        if (existingRegistration.isPresent()) {
+            token = existingRegistration.get().getToken();
+        } else {
+            token = UUID.randomUUID();
+            RegistrationEntity entity = new RegistrationEntity(email, token);
+            registrationRepository.save(entity);
+        }
+
+        emailService.sendRegistrationEmail(email, token);
 
 
 

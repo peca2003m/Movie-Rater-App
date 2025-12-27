@@ -80,7 +80,7 @@ function Dashboard({ user, onLogout }) {
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                         <User className="w-5 h-5 text-gray-600" />
-                        <span className="font-semibold">{user.username}</span>
+                        <span className="font-semibold">{user.firstName + " " + user.lastName}</span>
                     </div>
                     <button
                         onClick={onLogout}

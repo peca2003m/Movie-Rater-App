@@ -18,9 +18,14 @@ const api = {
             sessionStorage.removeItem('auth');
             throw new Error('Unauthorized');
         }
-
+        /*
         if (!response.ok && response.status !== 400) {
             throw new Error(`HTTP ${response.status}`);
+        }
+        */
+        if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || `HTTP ${response.status}`);
         }
 
         if (response.status === 204 || (response.status === 200 && options.method === 'POST')) {
